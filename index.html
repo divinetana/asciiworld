@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII Art Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        // This function updates the ASCII art preview in real time based on font and input changes
+        function updatePreview() {
+            var text = document.getElementById("inputText").value;
+            var font = document.getElementById("fontSelector").value;
+            var charWidth = document.getElementById("charWidth").value;
+            var charHeight = document.getElementById("charHeight").value;
+
+            var formData = new FormData();
+            formData.append("text", text);
+            formData.append("font", font);
+            formData.append("charWidth", charWidth);
+            formData.append("charHeight", charHeight);
+
+            fetch('/preview', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("asciiOutput").innerText = data;
+            });
+        }
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>ASCII Art Generator</h1>
+
+        <!-- Input Section -->
+        <div class="input-controls">
+            <textarea id="inputText" placeholder="Type something..." oninput="updatePreview()"></textarea>
+
+            <div class="controls">
+                <!-- Font Selection -->
+                <label for="fontSelector">Font:</label>
+                <select id="fontSelector" onchange="updatePreview()">
+                    {% for font in fonts %}
+                        <option value="{{ font }}" {% if font == selected_font %}selected{% endif %}>{{ font }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Character Width -->
+                <label for="charWidth">Character Width:</label>
+                <select id="charWidth" onchange="updatePreview()">
+                    <option value="10">Default</option>
+                    <option value="12">Wide</option>
+                    <option value="8">Narrow</option>
+                </select>
+
+                <!-- Character Height -->
+                <label for="charHeight">Character Height:</label>
+                <select id="charHeight" onchange="updatePreview()">
+                    <option value="16">Default</option>
+                    <option value="20">Tall</option>
+                    <option value="12">Short</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div class="preview-section">
+            <h2>Preview</h2>
+            <pre id="asciiOutput">Your ASCII art will appear here...</pre>
+        </div>
+    </div>
+
+    <!-- Other Links -->
+    <div class="other-stuff">
+        <h3></h3>
+        <ul>
+        </ul>
+    </div>
+
+    <div class="footer">
+        <p>DM @commiting.extortion on discord for support.</p>
+    </div>
+
+</body>
+</html>
